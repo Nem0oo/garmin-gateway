@@ -19,7 +19,6 @@ RUN useradd --system --no-create-home --uid 10001 app \
  && mkdir /data \
  && chown 10001:10001 /data \
  && chmod 700 /data
-VOLUME /data
 USER app
 
 EXPOSE 8001

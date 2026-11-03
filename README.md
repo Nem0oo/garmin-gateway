@@ -120,8 +120,7 @@ Erreurs (corps `{"error": "<message>"}`, jamais de secret) :
 
 ```bash
 cp .env.example .env            # VIRTUAL_HOST, MCP_API_KEY, REST_API_KEY, GARMIN_PERSONAL_API_KEY
-mkdir -p garmin_tokens
-sudo chown 10001:10001 garmin_tokens && sudo chmod 700 garmin_tokens   # utilisateur du conteneur
+mkdir -p garmin_tokens && chmod 700 garmin_tokens
 docker compose up -d
 ```
 
@@ -131,12 +130,14 @@ docker compose up -d
 
 ### Tokens d'écriture (Garmin Connect)
 
-Le dossier hôte `./garmin_tokens` est monté sur `/data`. Deux façons d'y mettre `garmin_tokens.json` :
+Le dossier hôte `./garmin_tokens` est monté sur `/data`. Le conteneur tourne avec l'uid/gid `PUID`/`PGID` (défaut
+`1000:1000`) : ce dossier et son contenu appartiennent donc à l'utilisateur de l'hôte, qui les manipule sans `sudo`.
+Deux façons d'y mettre `garmin_tokens.json` :
 
 - **Reprendre les tokens existants** (format garminconnect 0.3, ceux de garmin-bridge par exemple) :
   ```bash
-  sudo cp /chemin/vers/garmin-bridge/garmin_tokens.json garmin_tokens/garmin_tokens.json
-  sudo chown 10001:10001 garmin_tokens/garmin_tokens.json && sudo chmod 600 garmin_tokens/garmin_tokens.json
+  cp /chemin/vers/garmin-bridge/garmin_tokens.json garmin_tokens/garmin_tokens.json
+  chmod 600 garmin_tokens/garmin_tokens.json
   ```
 - **Premier login** dans le conteneur lancé (e-mail, mot de passe et code MFA demandés au terminal) :
   ```bash
@@ -154,7 +155,7 @@ générer une nouvelle sur Garmin Connect web, mettre à jour `.env` et relancer
 
 - Validation `Host` / `Origin` sur `DOMAIN` pour `/mcp` (anti DNS rebinding) : autre hôte → 421, autre origine → 403.
 - Websockets refusés. Logs d'accès uvicorn désactivés.
-- Utilisateur non-root (uid 10001), FS en lecture seule (seuls `/tmp` en tmpfs et `/data` sont inscriptibles), `cap_drop: ALL`,
+- Utilisateur non-root (`PUID`/`PGID`, défaut 1000), FS en lecture seule (seuls `/tmp` en tmpfs et `/data` sont inscriptibles), `cap_drop: ALL`,
   `no-new-privileges`, limites mémoire (384 Mo) et PIDs.
 
 ## CI
