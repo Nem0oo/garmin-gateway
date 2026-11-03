@@ -3,9 +3,9 @@ import json
 import httpx
 import pytest
 
-from garmin_mcp import garmin_client
-from garmin_mcp.config import TOKEN_PATH
-from garmin_mcp.garmin_client import GarminClient, GarminError
+from garmin_gateway.garmin import official
+from garmin_gateway.config import TOKEN_PATH
+from garmin_gateway.garmin.official import GarminClient, GarminError
 
 pytestmark = pytest.mark.anyio
 
@@ -93,21 +93,21 @@ async def test_token_endpoint_error_hides_secret():
         (3600, 3600.0),
         ("120", 120.0),
         (0, 0.0),  # 0 is a real value, not "missing"
-        (None, garmin_client._DEFAULT_TTL),
-        ("soon", garmin_client._DEFAULT_TTL),
-        ("NaN", garmin_client._DEFAULT_TTL),
-        ("inf", garmin_client._DEFAULT_TTL),
-        (-5, garmin_client._DEFAULT_TTL),
-        (True, garmin_client._DEFAULT_TTL),
+        (None, official._DEFAULT_TTL),
+        ("soon", official._DEFAULT_TTL),
+        ("NaN", official._DEFAULT_TTL),
+        ("inf", official._DEFAULT_TTL),
+        (-5, official._DEFAULT_TTL),
+        (True, official._DEFAULT_TTL),
     ],
 )
 def test_parse_ttl(value, expected):
-    assert garmin_client._parse_ttl(value) == expected
+    assert official._parse_ttl(value) == expected
 
 
 async def test_zero_ttl_refreshes_quickly(monkeypatch):
     now = [1000.0]
-    monkeypatch.setattr(garmin_client.time, "monotonic", lambda: now[0])
+    monkeypatch.setattr(official.time, "monotonic", lambda: now[0])
     fake = FakeGarmin(token_response=lambda n: httpx.Response(200, json={"access_token": f"t{n}", "expires_in": 0}))
     c = make_client(fake)
     await c.get_json("/x")
@@ -129,13 +129,13 @@ async def test_token_endpoint_unreachable():
 
 async def test_token_is_cached_then_refreshed_on_expiry(monkeypatch):
     now = [1000.0]
-    monkeypatch.setattr(garmin_client.time, "monotonic", lambda: now[0])
+    monkeypatch.setattr(official.time, "monotonic", lambda: now[0])
     fake = FakeGarmin(token_response=lambda n: httpx.Response(200, json={"access_token": f"t{n}", "expires_in": 100}))
     c = make_client(fake)
     await c.get_json("/x")
     await c.get_json("/x")
     assert fake.token_calls == 1
-    now[0] += 100 - garmin_client._EXPIRY_MARGIN  # refreshed ahead of the real expiry
+    now[0] += 100 - official._EXPIRY_MARGIN  # refreshed ahead of the real expiry
     await c.get_json("/x")
     assert fake.token_calls == 2
     assert fake.requests[-1].headers["authorization"] == "Bearer t2"
@@ -252,3 +252,30 @@ async def test_get_file_size_limit_does_not_apply_to_json():
     payload = {"x": "y" * 2000}
     fake = FakeGarmin(api_responses=[httpx.Response(200, content=json.dumps(payload).encode())])
     assert await make_client(fake).get_json("/x") == payload
+
+
+# --- Raw bytes (REST API) ------------------------------------------------------------------
+
+
+async def test_get_bytes_returns_raw_content_with_its_own_limit():
+    # 5000 bytes is above MAX_FILE_BYTES (1000 in tests): the limit passed in is the one applied.
+    fake = FakeGarmin(api_responses=[httpx.Response(200, content=b"z" * 5000)])
+    assert await make_client(fake).get_bytes("/f", max_bytes=5000) == b"z" * 5000
+
+
+async def test_get_bytes_too_large_is_a_dedicated_error():
+    fake = FakeGarmin(api_responses=[httpx.Response(200, content=b"z" * 101)])
+    with pytest.raises(official.GarminFileTooLarge, match="limit 100 bytes"):
+        await make_client(fake).get_bytes("/f", max_bytes=100)
+
+
+async def test_garmin_404_is_a_dedicated_error():
+    fake = FakeGarmin(api_responses=[httpx.Response(404, text="nope")])
+    with pytest.raises(official.GarminNotFound, match="Not found"):
+        await make_client(fake).get_bytes("/f", max_bytes=100)
+
+
+async def test_dedicated_errors_are_garmin_errors():
+    # Callers that only know GarminError (MCP tools) keep handling them unchanged.
+    assert issubclass(official.GarminNotFound, GarminError)
+    assert issubclass(official.GarminFileTooLarge, GarminError)

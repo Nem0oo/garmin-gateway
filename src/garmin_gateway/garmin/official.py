@@ -9,7 +9,7 @@ from typing import Any
 
 import httpx
 
-from .config import GARMIN_BASE_URL, GARMIN_PERSONAL_API_KEY, HTTP_TIMEOUT, MAX_FILE_BYTES, TOKEN_PATH
+from ..config import GARMIN_BASE_URL, GARMIN_PERSONAL_API_KEY, HTTP_TIMEOUT, MAX_FILE_BYTES, TOKEN_PATH
 
 # Used when the token endpoint gives no expiry; refresh well before any plausible lifetime.
 _DEFAULT_TTL = 600
@@ -18,6 +18,14 @@ _EXPIRY_MARGIN = 30
 
 class GarminError(Exception):
     """Error surfaced to the MCP client. Never contains credentials."""
+
+
+class GarminNotFound(GarminError):
+    """Garmin answered 404: the resource does not exist (or is not synced yet)."""
+
+
+class GarminFileTooLarge(GarminError):
+    """The response body went over the size limit given for the request."""
 
 
 class GarminClient:
@@ -92,7 +100,7 @@ class GarminClient:
         if resp.status_code == 403:
             raise GarminError("Garmin API access forbidden for this resource")
         if resp.status_code == 404:
-            raise GarminError("Not found")
+            raise GarminNotFound("Not found")
         if resp.status_code == 429:
             raise GarminError("Garmin API rate limit reached, retry later")
         if resp.status_code >= 400:
@@ -118,6 +126,11 @@ class GarminClient:
             "size_bytes": len(content),
             "base64": base64.b64encode(content).decode(),
         }
+
+    async def get_bytes(self, path: str, max_bytes: int) -> bytes:
+        """Raw body of a file download, capped at `max_bytes` (GarminFileTooLarge above it)."""
+        _, content = await self._request(path, None, max_bytes=max_bytes)
+        return content
 
     async def aclose(self) -> None:
         await self._http.aclose()
@@ -147,7 +160,7 @@ async def _read_capped(resp: httpx.Response, max_bytes: int | None) -> bytes:
     async for chunk in resp.aiter_bytes():
         size += len(chunk)
         if max_bytes is not None and size > max_bytes:
-            raise GarminError(f"File too large (limit {max_bytes} bytes)")
+            raise GarminFileTooLarge(f"File too large (limit {max_bytes} bytes)")
         chunks.append(chunk)
     return b"".join(chunks)
 
