@@ -1,0 +1,37 @@
+{
+ "easy_warmup_cooldown": [
+  {"type": "warmup", "end_condition": {"type": "time", "duree_minutes": 10}},
+  {"type": "cooldown", "end_condition": {"type": "time", "duree_minutes": 7.5}}
+ ],
+ "hr_zone": [
+  {"type": "interval", "end_condition": {"type": "time", "duree_minutes": 20}, "target": {"type": "heart_rate_zone", "bpm_min": 150, "bpm_max": 165}}
+ ],
+ "pace_distance": [
+  {"type": "interval", "end_condition": {"type": "distance", "distance_km": 1}, "target": {"type": "pace_zone", "allure_rapide_min_par_km": 4.5, "allure_lente_min_par_km": 5}}
+ ],
+ "power": [
+  {"type": "interval", "end_condition": {"type": "time", "duree_minutes": 2}, "target": {"type": "power_zone", "watts_min": 250, "watts_max": 300}}
+ ],
+ "distance_no_target": [
+  {"type": "interval", "end_condition": {"type": "distance", "distance_km": 5}}
+ ],
+ "full_session": [
+  {"type": "warmup", "end_condition": {"type": "time", "duree_minutes": 15}, "target": {"type": "no_target"}},
+  {"type": "repeat", "repetitions": 6, "steps": [
+    {"type": "interval", "end_condition": {"type": "distance", "distance_km": 0.4}, "target": {"type": "pace_zone", "allure_rapide_min_par_km": 3.75, "allure_lente_min_par_km": 4}},
+    {"type": "recovery", "end_condition": {"type": "fixed_rest", "duree_minutes": 1.5}}
+  ]},
+  {"type": "interval", "end_condition": {"type": "lap_button"}, "target": {"type": "cadence", "spm_min": 170, "spm_max": 180}},
+  {"type": "repeat", "repetitions": 3, "steps": [
+    {"type": "interval", "end_condition": {"type": "time", "duree_minutes": 1}, "target": {"type": "speed_zone", "kmh_min": 14, "kmh_max": 15.5}},
+    {"type": "recovery", "end_condition": {"type": "heart_rate", "bpm": 130}}
+  ]},
+  {"type": "cooldown", "end_condition": {"type": "calories", "calories": 50}}
+ ],
+ "other_targets": [
+  {"type": "interval", "end_condition": {"type": "power", "watts": 200}, "target": {"type": "grade", "grade_min": 2, "grade_max": 4.5}},
+  {"type": "interval", "end_condition": {"type": "iterations", "count": 3}, "target": {"type": "heart_rate_lap", "bpm_min": 140, "bpm_max": 150}},
+  {"type": "interval", "end_condition": {"type": "fixed_repetition", "count": 4}, "target": {"type": "power_lap", "watts_min": 180, "watts_max": 220}},
+  {"type": "interval", "end_condition": {"type": "reps", "count": 12}, "target": {"type": "resistance", "resistance_min": 3, "resistance_max": 5}}
+ ]
+}

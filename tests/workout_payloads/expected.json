@@ -1,0 +1,626 @@
+{
+ "distance_no_target": {
+  "payload": {
+   "author": {},
+   "estimatedDurationInSecs": 0,
+   "sportType": {
+    "displayOrder": 1,
+    "sportTypeId": 1,
+    "sportTypeKey": "running"
+   },
+   "workoutName": "Seance distance_no_target",
+   "workoutSegments": [
+    {
+     "segmentOrder": 1,
+     "sportType": {
+      "displayOrder": 1,
+      "sportTypeId": 1,
+      "sportTypeKey": "running"
+     },
+     "workoutSteps": [
+      {
+       "endCondition": {
+        "conditionTypeId": 3,
+        "conditionTypeKey": "distance",
+        "displayOrder": 3,
+        "displayable": true
+       },
+       "endConditionValue": 5000.0,
+       "stepOrder": 1,
+       "stepType": {
+        "displayOrder": 3,
+        "stepTypeId": 3,
+        "stepTypeKey": "interval"
+       },
+       "type": "ExecutableStepDTO"
+      }
+     ]
+    }
+   ]
+  },
+  "result": {
+   "date": "2026-11-10",
+   "scheduled": true,
+   "workout_id": 123
+  },
+  "schedule": [
+   123,
+   "2026-11-10"
+  ],
+  "total": 0
+ },
+ "easy_warmup_cooldown": {
+  "payload": {
+   "author": {},
+   "estimatedDurationInSecs": 1050,
+   "sportType": {
+    "displayOrder": 1,
+    "sportTypeId": 1,
+    "sportTypeKey": "running"
+   },
+   "workoutName": "Seance easy_warmup_cooldown",
+   "workoutSegments": [
+    {
+     "segmentOrder": 1,
+     "sportType": {
+      "displayOrder": 1,
+      "sportTypeId": 1,
+      "sportTypeKey": "running"
+     },
+     "workoutSteps": [
+      {
+       "endCondition": {
+        "conditionTypeId": 2,
+        "conditionTypeKey": "time",
+        "displayOrder": 2,
+        "displayable": true
+       },
+       "endConditionValue": 600.0,
+       "stepOrder": 1,
+       "stepType": {
+        "displayOrder": 1,
+        "stepTypeId": 1,
+        "stepTypeKey": "warmup"
+       },
+       "type": "ExecutableStepDTO"
+      },
+      {
+       "endCondition": {
+        "conditionTypeId": 2,
+        "conditionTypeKey": "time",
+        "displayOrder": 2,
+        "displayable": true
+       },
+       "endConditionValue": 450.0,
+       "stepOrder": 2,
+       "stepType": {
+        "displayOrder": 2,
+        "stepTypeId": 2,
+        "stepTypeKey": "cooldown"
+       },
+       "type": "ExecutableStepDTO"
+      }
+     ]
+    }
+   ]
+  },
+  "result": {
+   "date": "2026-11-10",
+   "scheduled": true,
+   "workout_id": 123
+  },
+  "schedule": [
+   123,
+   "2026-11-10"
+  ],
+  "total": 1050
+ },
+ "full_session": {
+  "payload": {
+   "author": {},
+   "estimatedDurationInSecs": 2178,
+   "sportType": {
+    "displayOrder": 1,
+    "sportTypeId": 1,
+    "sportTypeKey": "running"
+   },
+   "workoutName": "Seance full_session",
+   "workoutSegments": [
+    {
+     "segmentOrder": 1,
+     "sportType": {
+      "displayOrder": 1,
+      "sportTypeId": 1,
+      "sportTypeKey": "running"
+     },
+     "workoutSteps": [
+      {
+       "endCondition": {
+        "conditionTypeId": 2,
+        "conditionTypeKey": "time",
+        "displayOrder": 2,
+        "displayable": true
+       },
+       "endConditionValue": 900.0,
+       "stepOrder": 1,
+       "stepType": {
+        "displayOrder": 1,
+        "stepTypeId": 1,
+        "stepTypeKey": "warmup"
+       },
+       "targetType": {
+        "displayOrder": 1,
+        "workoutTargetTypeId": 1,
+        "workoutTargetTypeKey": "no.target"
+       },
+       "type": "ExecutableStepDTO"
+      },
+      {
+       "endCondition": {
+        "conditionTypeId": 7,
+        "conditionTypeKey": "iterations",
+        "displayOrder": 7,
+        "displayable": false
+       },
+       "endConditionValue": 6.0,
+       "numberOfIterations": 6,
+       "smartRepeat": false,
+       "stepOrder": 2,
+       "stepType": {
+        "displayOrder": 6,
+        "stepTypeId": 6,
+        "stepTypeKey": "repeat"
+       },
+       "type": "RepeatGroupDTO",
+       "workoutSteps": [
+        {
+         "endCondition": {
+          "conditionTypeId": 3,
+          "conditionTypeKey": "distance",
+          "displayOrder": 3,
+          "displayable": true
+         },
+         "endConditionValue": 400.0,
+         "stepOrder": 1,
+         "stepType": {
+          "displayOrder": 3,
+          "stepTypeId": 3,
+          "stepTypeKey": "interval"
+         },
+         "targetType": {
+          "displayOrder": 6,
+          "workoutTargetTypeId": 6,
+          "workoutTargetTypeKey": "pace_zone"
+         },
+         "targetValueOne": 4.4444,
+         "targetValueTwo": 4.1667,
+         "type": "ExecutableStepDTO"
+        },
+        {
+         "endCondition": {
+          "conditionTypeId": 8,
+          "conditionTypeKey": "fixed.rest",
+          "displayOrder": 8,
+          "displayable": true
+         },
+         "endConditionValue": 90.0,
+         "stepOrder": 2,
+         "stepType": {
+          "displayOrder": 4,
+          "stepTypeId": 4,
+          "stepTypeKey": "recovery"
+         },
+         "type": "ExecutableStepDTO"
+        }
+       ]
+      },
+      {
+       "endCondition": {
+        "conditionTypeId": 1,
+        "conditionTypeKey": "lap.button",
+        "displayOrder": 1,
+        "displayable": true
+       },
+       "stepOrder": 3,
+       "stepType": {
+        "displayOrder": 3,
+        "stepTypeId": 3,
+        "stepTypeKey": "interval"
+       },
+       "targetType": {
+        "displayOrder": 3,
+        "workoutTargetTypeId": 3,
+        "workoutTargetTypeKey": "cadence"
+       },
+       "targetValueOne": 170.0,
+       "targetValueTwo": 180.0,
+       "type": "ExecutableStepDTO"
+      },
+      {
+       "endCondition": {
+        "conditionTypeId": 7,
+        "conditionTypeKey": "iterations",
+        "displayOrder": 7,
+        "displayable": false
+       },
+       "endConditionValue": 3.0,
+       "numberOfIterations": 3,
+       "smartRepeat": false,
+       "stepOrder": 4,
+       "stepType": {
+        "displayOrder": 6,
+        "stepTypeId": 6,
+        "stepTypeKey": "repeat"
+       },
+       "type": "RepeatGroupDTO",
+       "workoutSteps": [
+        {
+         "endCondition": {
+          "conditionTypeId": 2,
+          "conditionTypeKey": "time",
+          "displayOrder": 2,
+          "displayable": true
+         },
+         "endConditionValue": 60.0,
+         "stepOrder": 1,
+         "stepType": {
+          "displayOrder": 3,
+          "stepTypeId": 3,
+          "stepTypeKey": "interval"
+         },
+         "targetType": {
+          "displayOrder": 5,
+          "workoutTargetTypeId": 5,
+          "workoutTargetTypeKey": "speed_zone"
+         },
+         "targetValueOne": 14.0,
+         "targetValueTwo": 15.5,
+         "type": "ExecutableStepDTO"
+        },
+        {
+         "endCondition": {
+          "conditionTypeId": 6,
+          "conditionTypeKey": "heart.rate",
+          "displayOrder": 6,
+          "displayable": true
+         },
+         "endConditionValue": 130.0,
+         "stepOrder": 2,
+         "stepType": {
+          "displayOrder": 4,
+          "stepTypeId": 4,
+          "stepTypeKey": "recovery"
+         },
+         "type": "ExecutableStepDTO"
+        }
+       ]
+      },
+      {
+       "endCondition": {
+        "conditionTypeId": 4,
+        "conditionTypeKey": "calories",
+        "displayOrder": 4,
+        "displayable": true
+       },
+       "endConditionValue": 50.0,
+       "stepOrder": 5,
+       "stepType": {
+        "displayOrder": 2,
+        "stepTypeId": 2,
+        "stepTypeKey": "cooldown"
+       },
+       "type": "ExecutableStepDTO"
+      }
+     ]
+    }
+   ]
+  },
+  "result": {
+   "date": "2026-11-10",
+   "scheduled": true,
+   "workout_id": 123
+  },
+  "schedule": [
+   123,
+   "2026-11-10"
+  ],
+  "total": 2178
+ },
+ "hr_zone": {
+  "payload": {
+   "author": {},
+   "estimatedDurationInSecs": 1200,
+   "sportType": {
+    "displayOrder": 1,
+    "sportTypeId": 1,
+    "sportTypeKey": "running"
+   },
+   "workoutName": "Seance hr_zone",
+   "workoutSegments": [
+    {
+     "segmentOrder": 1,
+     "sportType": {
+      "displayOrder": 1,
+      "sportTypeId": 1,
+      "sportTypeKey": "running"
+     },
+     "workoutSteps": [
+      {
+       "endCondition": {
+        "conditionTypeId": 2,
+        "conditionTypeKey": "time",
+        "displayOrder": 2,
+        "displayable": true
+       },
+       "endConditionValue": 1200.0,
+       "stepOrder": 1,
+       "stepType": {
+        "displayOrder": 3,
+        "stepTypeId": 3,
+        "stepTypeKey": "interval"
+       },
+       "targetType": {
+        "displayOrder": 4,
+        "workoutTargetTypeId": 4,
+        "workoutTargetTypeKey": "heart_rate_zone"
+       },
+       "targetValueOne": 150.0,
+       "targetValueTwo": 165.0,
+       "type": "ExecutableStepDTO"
+      }
+     ]
+    }
+   ]
+  },
+  "result": {
+   "date": "2026-11-10",
+   "scheduled": true,
+   "workout_id": 123
+  },
+  "schedule": [
+   123,
+   "2026-11-10"
+  ],
+  "total": 1200
+ },
+ "other_targets": {
+  "payload": {
+   "author": {},
+   "estimatedDurationInSecs": 0,
+   "sportType": {
+    "displayOrder": 1,
+    "sportTypeId": 1,
+    "sportTypeKey": "running"
+   },
+   "workoutName": "Seance other_targets",
+   "workoutSegments": [
+    {
+     "segmentOrder": 1,
+     "sportType": {
+      "displayOrder": 1,
+      "sportTypeId": 1,
+      "sportTypeKey": "running"
+     },
+     "workoutSteps": [
+      {
+       "endCondition": {
+        "conditionTypeId": 5,
+        "conditionTypeKey": "power",
+        "displayOrder": 5,
+        "displayable": true
+       },
+       "endConditionValue": 200.0,
+       "stepOrder": 1,
+       "stepType": {
+        "displayOrder": 3,
+        "stepTypeId": 3,
+        "stepTypeKey": "interval"
+       },
+       "targetType": {
+        "displayOrder": 7,
+        "workoutTargetTypeId": 7,
+        "workoutTargetTypeKey": "grade"
+       },
+       "targetValueOne": 2.0,
+       "targetValueTwo": 4.5,
+       "type": "ExecutableStepDTO"
+      },
+      {
+       "endCondition": {
+        "conditionTypeId": 7,
+        "conditionTypeKey": "iterations",
+        "displayOrder": 7,
+        "displayable": true
+       },
+       "endConditionValue": 3.0,
+       "stepOrder": 2,
+       "stepType": {
+        "displayOrder": 3,
+        "stepTypeId": 3,
+        "stepTypeKey": "interval"
+       },
+       "targetType": {
+        "displayOrder": 8,
+        "workoutTargetTypeId": 8,
+        "workoutTargetTypeKey": "heart_rate_lap"
+       },
+       "targetValueOne": 140.0,
+       "targetValueTwo": 150.0,
+       "type": "ExecutableStepDTO"
+      },
+      {
+       "endCondition": {
+        "conditionTypeId": 9,
+        "conditionTypeKey": "fixed.repetition",
+        "displayOrder": 9,
+        "displayable": true
+       },
+       "endConditionValue": 4.0,
+       "stepOrder": 3,
+       "stepType": {
+        "displayOrder": 3,
+        "stepTypeId": 3,
+        "stepTypeKey": "interval"
+       },
+       "targetType": {
+        "displayOrder": 9,
+        "workoutTargetTypeId": 9,
+        "workoutTargetTypeKey": "power_lap"
+       },
+       "targetValueOne": 180.0,
+       "targetValueTwo": 220.0,
+       "type": "ExecutableStepDTO"
+      },
+      {
+       "endCondition": {
+        "conditionTypeId": 10,
+        "conditionTypeKey": "reps",
+        "displayOrder": 10,
+        "displayable": true
+       },
+       "endConditionValue": 12.0,
+       "stepOrder": 4,
+       "stepType": {
+        "displayOrder": 3,
+        "stepTypeId": 3,
+        "stepTypeKey": "interval"
+       },
+       "targetType": {
+        "displayOrder": 15,
+        "workoutTargetTypeId": 15,
+        "workoutTargetTypeKey": "resistance"
+       },
+       "targetValueOne": 3.0,
+       "targetValueTwo": 5.0,
+       "type": "ExecutableStepDTO"
+      }
+     ]
+    }
+   ]
+  },
+  "result": {
+   "date": "2026-11-10",
+   "scheduled": true,
+   "workout_id": 123
+  },
+  "schedule": [
+   123,
+   "2026-11-10"
+  ],
+  "total": 0
+ },
+ "pace_distance": {
+  "payload": {
+   "author": {},
+   "estimatedDurationInSecs": 285,
+   "sportType": {
+    "displayOrder": 1,
+    "sportTypeId": 1,
+    "sportTypeKey": "running"
+   },
+   "workoutName": "Seance pace_distance",
+   "workoutSegments": [
+    {
+     "segmentOrder": 1,
+     "sportType": {
+      "displayOrder": 1,
+      "sportTypeId": 1,
+      "sportTypeKey": "running"
+     },
+     "workoutSteps": [
+      {
+       "endCondition": {
+        "conditionTypeId": 3,
+        "conditionTypeKey": "distance",
+        "displayOrder": 3,
+        "displayable": true
+       },
+       "endConditionValue": 1000.0,
+       "stepOrder": 1,
+       "stepType": {
+        "displayOrder": 3,
+        "stepTypeId": 3,
+        "stepTypeKey": "interval"
+       },
+       "targetType": {
+        "displayOrder": 6,
+        "workoutTargetTypeId": 6,
+        "workoutTargetTypeKey": "pace_zone"
+       },
+       "targetValueOne": 3.7037,
+       "targetValueTwo": 3.3333,
+       "type": "ExecutableStepDTO"
+      }
+     ]
+    }
+   ]
+  },
+  "result": {
+   "date": "2026-11-10",
+   "scheduled": true,
+   "workout_id": 123
+  },
+  "schedule": [
+   123,
+   "2026-11-10"
+  ],
+  "total": 285
+ },
+ "power": {
+  "payload": {
+   "author": {},
+   "estimatedDurationInSecs": 120,
+   "sportType": {
+    "displayOrder": 1,
+    "sportTypeId": 1,
+    "sportTypeKey": "running"
+   },
+   "workoutName": "Seance power",
+   "workoutSegments": [
+    {
+     "segmentOrder": 1,
+     "sportType": {
+      "displayOrder": 1,
+      "sportTypeId": 1,
+      "sportTypeKey": "running"
+     },
+     "workoutSteps": [
+      {
+       "endCondition": {
+        "conditionTypeId": 2,
+        "conditionTypeKey": "time",
+        "displayOrder": 2,
+        "displayable": true
+       },
+       "endConditionValue": 120.0,
+       "stepOrder": 1,
+       "stepType": {
+        "displayOrder": 3,
+        "stepTypeId": 3,
+        "stepTypeKey": "interval"
+       },
+       "targetType": {
+        "displayOrder": 2,
+        "workoutTargetTypeId": 2,
+        "workoutTargetTypeKey": "power_zone"
+       },
+       "targetValueOne": 250.0,
+       "targetValueTwo": 300.0,
+       "type": "ExecutableStepDTO"
+      }
+     ]
+    }
+   ]
+  },
+  "result": {
+   "date": "2026-11-10",
+   "scheduled": true,
+   "workout_id": 123
+  },
+  "schedule": [
+   123,
+   "2026-11-10"
+  ],
+  "total": 120
+ }
+}

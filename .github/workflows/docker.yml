@@ -1,4 +1,4 @@
-name: Build garmin-mcp image
+name: Build garmin-gateway image
 
 on:
   push:
@@ -39,8 +39,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/garmin-mcp:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/garmin-mcp:${{ github.ref_name }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/garmin-gateway:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/garmin-gateway:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

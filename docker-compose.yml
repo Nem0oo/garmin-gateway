@@ -1,20 +1,25 @@
-name: garmin-mcp
+name: garmin-gateway
 
 services:
-  garmin-mcp:
-    image: nem0oo/garmin-mcp:latest
+  garmin-gateway:
+    image: nem0oo/garmin-gateway:latest
     build: .
-    container_name: garmin-mcp
+    container_name: garmin-gateway
     restart: unless-stopped
     environment:
       MCP_API_KEY: ${MCP_API_KEY:?MCP_API_KEY is required}
+      REST_API_KEY: ${REST_API_KEY:?REST_API_KEY is required}
       GARMIN_PERSONAL_API_KEY: ${GARMIN_PERSONAL_API_KEY:?GARMIN_PERSONAL_API_KEY is required}
       DOMAIN: ${VIRTUAL_HOST:?VIRTUAL_HOST is required}
+      GARMIN_TOKEN_STORE: /data/garmin_tokens.json
       PORT: "8001"
       # nginx-proxy / acme-companion
       VIRTUAL_HOST: ${VIRTUAL_HOST}
       VIRTUAL_PORT: "8001"
       LETSENCRYPT_HOST: ${VIRTUAL_HOST}
+    # Host folder owned by the container user: mkdir garmin_tokens && sudo chown 10001:10001 garmin_tokens
+    volumes:
+      - ./garmin_tokens:/data
     # No `ports:` on purpose: only reachable through nginx-proxy on the shared network.
     expose:
       - "8001"
@@ -27,7 +32,9 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
-    mem_limit: 256m
+    # Measured: ~55 MiB idle (garminconnect loaded), FIT decoding costs ~30x the FIT size
+    # (3 h ride ~1.5 MB -> ~45 MiB, 6 h ~90 MiB). 384m covers long rides and two concurrent decodes.
+    mem_limit: 384m
     pids_limit: 100
     logging:
       driver: json-file

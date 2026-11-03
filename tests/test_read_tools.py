@@ -1,12 +1,25 @@
 import json
 
 import pytest
-from starlette.testclient import TestClient
 
-from garmin_mcp import server
-from garmin_mcp.garmin_client import GarminError
+from garmin_gateway.garmin.official import GarminError
+from garmin_gateway.mcp import read_tools, server
 
-from .conftest import API_KEY, DOMAIN
+from .conftest import API_KEY
+
+READ_TOOLS = {
+    "list_activities", "get_activity", "get_activity_workouts", "get_activity_file",
+    "get_wellness_activity_summaries", "get_daily_summary", "get_daily_summaries", "get_steps",
+    "get_stress", "get_hydration", "get_sleep", "get_sleep_summaries", "get_hrv", "get_hrv_summaries",
+    "get_heart_rate", "get_body_battery", "get_spo2", "get_weight", "get_weight_entries",
+    "get_weight_goals", "get_fitness_age", "get_heart_rate_zones", "get_user_settings",
+    "get_nutrition_log", "get_menstrual_cycle_summary", "get_menstrual_cycle_day",
+}
+WRITE_TOOLS = {
+    "push_workout", "list_workouts", "get_workout",
+    "schedule_existing_workout", "move_scheduled_workout", "get_scheduled_workouts",
+}
+ALL_TOOLS = READ_TOOLS | WRITE_TOOLS | {"server_health"}
 
 
 @pytest.fixture
@@ -22,8 +35,8 @@ def calls(monkeypatch):
         recorded.append((path, None))
         return {"base64": ""}
 
-    monkeypatch.setattr(server.client, "get_json", fake_get_json)
-    monkeypatch.setattr(server.client, "get_file", fake_get_file)
+    monkeypatch.setattr(read_tools.client, "get_json", fake_get_json)
+    monkeypatch.setattr(read_tools.client, "get_file", fake_get_file)
     return recorded
 
 
@@ -31,8 +44,8 @@ def calls(monkeypatch):
 
 
 def test_range_accepts_inclusive_maximum():
-    server._range("2026-01-01", "2026-01-28", 28)
-    server._range("2026-01-01", "2026-01-01", 1)
+    read_tools._range("2026-01-01", "2026-01-28", 28)
+    read_tools._range("2026-01-01", "2026-01-01", 1)
 
 
 @pytest.mark.parametrize(
@@ -46,7 +59,29 @@ def test_range_accepts_inclusive_maximum():
 )
 def test_range_rejects(start, end, match):
     with pytest.raises(GarminError, match=match):
-        server._range(start, end, 28)
+        read_tools._range(start, end, 28)
+
+
+# --- server_health -----------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("state,expected", [("file", True), ("missing", False), ("directory", False)])
+def test_server_health_reports_write_tokens(tmp_path, monkeypatch, state, expected):
+    store = tmp_path / "garmin_tokens.json"
+    if state == "file":
+        store.write_text("{}")
+    elif state == "directory":
+        store.mkdir()
+    monkeypatch.setattr(server, "GARMIN_TOKEN_STORE", str(store))
+    assert server.server_health() == {"status": "ok", "write_tokens": expected}
+
+
+@pytest.mark.anyio
+async def test_server_health_through_mcp_never_calls_garmin(calls):
+    result = await server.mcp.call_tool("server_health", {})
+    content = result[0] if isinstance(result, tuple) else result
+    assert json.loads(content[0].text) == {"status": "ok", "write_tokens": False}
+    assert calls == []
 
 
 # --- Tools (called through FastMCP, so argument validation runs) ----------------------
@@ -58,9 +93,9 @@ async def call(name, **args):
 
 @pytest.mark.anyio
 async def test_all_tools_are_registered():
-    tools = {t.name for t in await server.mcp.list_tools()}
-    assert len(tools) == 27
-    assert {"list_activities", "get_activity_file", "get_sleep", "get_body_battery"} <= tools
+    tools = [t.name for t in await server.mcp.list_tools()]
+    assert len(tools) == 33
+    assert set(tools) == ALL_TOOLS
 
 
 @pytest.mark.anyio
@@ -137,13 +172,6 @@ MCP_HEADERS = {"Accept": "application/json, text/event-stream", "Content-Type": 
 LIST_TOOLS = {"jsonrpc": "2.0", "id": 1, "method": "tools/list"}
 
 
-@pytest.fixture(scope="module")
-def http():
-    # The MCP session manager can only be started once per process, so the app's lifespan is shared.
-    with TestClient(server.app, base_url=f"https://{DOMAIN}") as c:
-        yield c
-
-
 def _rpc_result(response):
     data = next(line[5:] for line in response.text.splitlines() if line.startswith("data:"))
     return json.loads(data)["result"]
@@ -164,14 +192,16 @@ def test_mcp_rejects_key_in_url(http):
 def test_mcp_lists_tools_with_key(http):
     r = http.post("/mcp", headers={**MCP_HEADERS, "Authorization": f"Bearer {API_KEY}"}, json=LIST_TOOLS)
     assert r.status_code == 200
-    assert len(_rpc_result(r)["tools"]) == 27
+    names = [t["name"] for t in _rpc_result(r)["tools"]]
+    assert len(names) == 33
+    assert set(names) == ALL_TOOLS
 
 
 def test_mcp_tool_error_is_reported_without_crash(http, monkeypatch):
     async def failing(path, params=None):
         raise GarminError("Garmin API rate limit reached, retry later")
 
-    monkeypatch.setattr(server.client, "get_json", failing)
+    monkeypatch.setattr(read_tools.client, "get_json", failing)
     body = {"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "get_user_settings", "arguments": {}}}
     r = http.post("/mcp", headers={**MCP_HEADERS, "Authorization": f"Bearer {API_KEY}"}, json=body)
     result = _rpc_result(r)
